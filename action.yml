@@ -65,7 +65,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'ghcr.io/ermetic/code-pipeline-scanner:latest'
+  image: 'docker://ghcr.io/ermetic/code-pipeline-scanner:latest'
   args:
     - scan
     - terraform
