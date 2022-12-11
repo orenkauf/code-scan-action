@@ -7,10 +7,10 @@ branding:
 inputs:
   api-token:
     description: 'API token'
-    required: true
+    required: false
   api-url:
     description: 'API URL'
-    required: true
+    required: false
   code-branch:
     default: ${{ github.event_name != 'pull_request' && github.ref_name || github.head_ref }}
     description: 'Code branch'
@@ -28,6 +28,22 @@ inputs:
   failure-policy-min-severity:
     description: 'Minimum policy severity that should return an exit code different from 0 (Information Low Medium High Critical)'
     required: false
+  logs:
+    default: "true"
+    description: 'Print log messages to standard output'
+    required: false
+  output-file-formats:
+    description: 'Output file formats (Csv Json Sarif)'
+    required: false
+  output-file-name:
+    description: 'Output file name'
+    required: false
+  output-path:
+    description: 'Output path'
+    required: false
+  paths:
+    description: 'Paths'
+    required: false
   pipeline-trigger-type:
     default: ${{ github.event_name }}
     description: 'Pipeline trigger type'
@@ -42,53 +58,46 @@ inputs:
   policy-min-severity:
     description: 'Exclude policies by severity (Information Low Medium High Critical)'
     required: false
-  output-file-formats:
-    description: 'Output file formats (Csv Json Sarif)'
-    required: false
-  output-file-name:
-    description: 'Output file name'
-    required: false
-  output-path:
-    description: 'Output path'
-    required: false
-  paths:
-    description: 'Paths'
+  silent:
+    default: "false"
+    description: 'Do not print output to standard output'
     required: false
 
 runs:
   using: 'docker'
-  image: ''
+  image: 'ghcr.io/ermetic/code-pipeline-scanner:latest'
   args:
     - scan
     - terraform
-    - --verbose
-    - ${{ inputs.api-token != '' && '--api-token' || '' }}
+    - ${{ inputs.api-token && '--api-token' || '' }}
     - ${{ inputs.api-token }}
-    - ${{ inputs.api-url != '' &&  '--api-url' || '' }}
+    - ${{ inputs.api-url &&  '--api-url' || '' }}
     - ${{ inputs.api-url }}
-    - ${{ inputs.api-token != '' &&  '--code-branch' || '' }}
+    - ${{ inputs.api-token &&  '--code-branch' || '' }}
     - ${{ inputs.code-branch }}
-    - ${{ inputs.api-token != '' &&  '--code-repository' || '' }}
+    - ${{ inputs.api-token &&  '--code-repository' || '' }}
     - ${{ inputs.code-repository }}
-    - ${{ inputs.exclude-paths != '' &&  '--exclude-paths' || '' }}
+    - ${{ inputs.exclude-paths &&  '--exclude-paths' || '' }}
     - ${{ inputs.exclude-paths }}
-    - ${{ inputs.exclude-policies != '' &&  '--exclude-policies' || '' }}
+    - ${{ inputs.exclude-policies &&  '--exclude-policies' || '' }}
     - ${{ inputs.exclude-policies }}
-    - ${{ inputs.failure-policy-min-severity != '' &&  '--failure-policy-min-severity' || '' }}
+    - ${{ inputs.failure-policy-min-severity &&  '--failure-policy-min-severity' || '' }}
     - ${{ inputs.failure-policy-min-severity }}
-    - ${{ inputs.api-token != '' &&  '--pipeline-trigger-type' || '' }}
-    - ${{ inputs.pipeline-trigger-type }}
-    - ${{ inputs.api-token != '' &&  '--pipeline-trigger-user' || '' }}
-    - ${{ inputs.pipeline-trigger-user }}
-    - ${{ inputs.policies != '' &&  '--policies' || '' }}
-    - ${{ inputs.policies }}
-    - ${{ inputs.policy-min-severity != '' &&  '--policy-min-severity' || '' }}
-    - ${{ inputs.policy-min-severity }}
-    - ${{ inputs.output-file-formats != '' &&  '--output-file-formats' || '' }}
+    - ${{ inputs.logs == 'true' &&  '--logs' || '' }}
+    - ${{ inputs.output-file-formats &&  '--output-file-formats' || '' }}
     - ${{ inputs.output-file-formats }}
-    - ${{ inputs.output-file-name != '' &&  '--output-file-name' || '' }}
+    - ${{ inputs.output-file-name &&  '--output-file-name' || '' }}
     - ${{ inputs.output-file-name }}
-    - ${{ inputs.output-path != '' &&  '--output-path' || '' }}
+    - ${{ inputs.output-path &&  '--output-path' || '' }}
     - ${{ inputs.output-path }}
-    - ${{ inputs.paths != '' &&  '--paths' || '' }}
+    - ${{ inputs.paths &&  '--paths' || '' }}
     - ${{ inputs.paths }}
+    - ${{ inputs.api-token &&  '--pipeline-trigger-type' || '' }}
+    - ${{ inputs.pipeline-trigger-type }}
+    - ${{ inputs.api-token &&  '--pipeline-trigger-user' || '' }}
+    - ${{ inputs.pipeline-trigger-user }}
+    - ${{ inputs.policies &&  '--policies' || '' }}
+    - ${{ inputs.policies }}
+    - ${{ inputs.policy-min-severity &&  '--policy-min-severity' || '' }}
+    - ${{ inputs.policy-min-severity }}
+    - ${{ inputs.silent == 'true' &&  '--silent' || '' }}
